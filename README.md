@@ -11,7 +11,7 @@ This repository contains the complete analysis pipeline for the manuscript:
 >
 > Raphael B. Moreira and Vamsi K. Velcheti
 >
-> *Submitted to Diagnostics (MDPI)*
+
 
 ## Key Findings
 
