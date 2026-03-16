@@ -1,10 +1,28 @@
+# AlphaMissense HRR Pan-Cancer Pipeline
+# Install: pip install -r requirements.txt
+# Generated with Python 3.12.x
+
+# Core data
 pandas==2.3.3
 numpy==2.4.2
+openpyxl>=3.1.0
+
+# Statistics & survival
 scipy==1.17.0
 lifelines==0.30.1
 scikit-learn==1.8.0
+
+# Visualization
 matplotlib==3.10.8
 seaborn==0.13.2
+adjustText>=1.2.0
+
+# Data acquisition
 requests>=2.31
 tqdm>=4.66
+
+# Table summaries (Notebook 2)
+tableone>=0.9.1
+
+# Notebook tooling
 nbformat>=5.10
