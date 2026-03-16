@@ -9,7 +9,7 @@ This repository contains the complete analysis pipeline for the manuscript:
 
 > **AlphaMissense-Guided Reclassification of Variants of Uncertain Significance in Homologous Recombination Repair Genes: A Pan-Cancer Validation Study Across 31 TCGA Tumor Types**
 >
-> Raphael B. Moreira, Indianara V. Brandão, and Vamsi K. Velcheti
+> Raphael Brandao, Indianara V. Brandão, Felipe Batalini and Vamsi K. Velcheti
 
 ## Key Findings
 
