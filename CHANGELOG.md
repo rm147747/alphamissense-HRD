@@ -1,36 +1,36 @@
 # Changelog
 
-All notable changes to this project are documented in this file.
+## [1.2.0] — 2026-03-16
+
+### New Notebooks
+- **Notebook5_Synthetic_Validation.ipynb**: Pipeline unit test (87.3% accuracy, biallelic sens 68%, spec 99%), power analysis (need N=5,000-7,500 for 80% power), adversarial stress test (12/12 scenarios survive p<0.05)
+- **Notebook6_Robustness_Analyses.ipynb**: Age-adjusted Cox (HR unchanged at 0.844), Schoenfeld PH test (p=0.870, assumption holds), bootstrap HR (median 0.802, CI 0.669-0.942), permutation test (p<0.001), ridge-penalized Cox sweep
+
+### New Results
+- `results/reviewer_robustness_analyses.csv` — 9 robustness tests
+- `results/synthetic_module1.csv` — pipeline unit test metrics
+- `results/synthetic_module2.csv` — power analysis by sample size
+- `results/synthetic_module3.csv` — 12 adversarial stress test scenarios
+
+### Documentation
+- Updated README.md to reflect 6 notebooks and all results files
 
 ## [1.1.0] — 2026-03-16
 
 ### Repository Cleanup (Audit-Ready)
-- **Renamed notebooks** for consistent, descriptive naming:
-  - `Notebook1_AlphaMissense_PRAD_HRR (3).ipynb` → `Notebook1_Data_Acquisition.ipynb`
-  - `Notebook2_Statistical_Analysis.ipynb` → `Notebook2_Concordance_VUS.ipynb`
-  - `Notebook3_Validation_mCRPC.ipynb` → `Notebook3_mCRPC_Validation.ipynb`
-  - `Notebook4_PanCancer_FINAL.ipynb` → `Notebook4_PanCancer_Survival.ipynb`
-- **Removed 3 DEBUG cells** from Notebook 3 (cells 14–16: ad-hoc patient-ID matching diagnostics; not part of the analysis pipeline)
-- **Removed stale figures** (pre-correction versions):
-  - `Fig_pancancer_KM_pooled.png/pdf` → replaced by corrected version
-  - `Fig_pancancer_forest_plot.png/pdf` → replaced by corrected version
-- **Renamed `_FIXED` figures** to clean names (the FIX is now the canonical version)
-- **Removed `.vscode/settings.json`** (IDE config, not relevant to analysis)
-- **Updated README.md** to reflect actual repository contents
-- **Added METHODS.md** with detailed methodological documentation
-- **Added CHANGELOG.md** (this file)
+- Renamed notebooks for consistent naming (removed spaces, parentheses, "FINAL")
+- Removed 3 DEBUG cells from Notebook 3
+- Removed stale pre-correction figure duplicates (_FIXED suffix)
+- Removed `.vscode/settings.json`
+- Added METHODS.md and CHANGELOG.md
 
 ### Manuscript Correction
-- **HR discrepancy fixed**: Manuscript text previously reported HR = 0.87 (p = 0.091), which corresponded to a ridge-penalized pooled Cox sensitivity analysis (Notebook 4, Cell 10). The primary analysis (true stratified Cox, Notebook 4, Cell 6) produces HR = 0.848 (rounded to 0.85), 95% CI 0.716–1.005, p = 0.057. All five instances in the manuscript (Abstract, Section 3.4 ×2, Discussion, Limitations) were corrected.
-- **Root cause**: During manuscript drafting, numbers from the sensitivity analysis (ridge λ=0.01) were accidentally substituted for the primary analysis. The `manifest.json` and `pancancer_cox_results.csv` always contained the correct values.
-- **Verification**: `manifest.json` reports `stratified_cox_hr: 0.848` — this matches the Notebook 4 output and the corrected manuscript.
+- HR corrected from 0.87 (sensitivity analysis) to 0.85 (primary analysis) in 5 manuscript instances. Repository code always contained the correct value (0.848). See METHODS.md for details.
 
 ## [1.0.0] — 2026-02-16
 
 ### Initial Release
-- Complete analysis pipeline: 4 notebooks, 25 HRR genes, 31 TCGA tumor types
-- ClinVar concordance: κ = 0.733 (bootstrap 95% CI 0.712–0.754)
-- VUS reclassification: 90.1% (66,912 / 74,246)
-- Pan-cancer stratified Cox: HR = 0.85, 95% CI 0.72–1.01, p = 0.057
-- mCRPC feasibility: SU2C/PCF cohort (n = 18, underpowered)
-- All data sourced from public databases (TCGA via cBioPortal, ClinVar, AlphaMissense)
+- 4 notebooks (NB1-NB4), 25 HRR genes, 31 TCGA tumor types
+- ClinVar kappa = 0.733, VUS reclassification 90.1%
+- Stratified Cox HR = 0.85, meta-analytic HR = 0.86
+- All data from public databases (TCGA, ClinVar, AlphaMissense)
