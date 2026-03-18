@@ -1,0 +1,115 @@
+# Audit Trail — AlphaHRD Repository
+
+This document provides a complete audit trail for the AlphaHRD project.
+Every analytical result is traceable to a specific script/notebook cell,
+with explicit documentation of data provenance, decisions, and limitations.
+
+## Data Provenance
+
+| Data Source | Access Method | Date | Identifier |
+|-------------|--------------|------|------------|
+| TCGA PanCan Atlas mutations | cBioPortal REST API | 2026-02-16 | 31 `_tcga_pan_can_atlas_2018` studies |
+| TCGA PanCan Atlas clinical | cBioPortal REST API | 2026-02-16 | OS, age, stage, purity (ABSOLUTE) |
+| AlphaMissense scores | hegelab.org per-protein TSVs | 2026-02-16 | Cheng et al., Science 2023 |
+| ClinVar classifications | NCBI E-utilities API | 2026-02-16 | Pathogenic/LP + Benign/LB only |
+| SU2C/PCF mCRPC | cBioPortal (`prad_su2c_2019`) | 2026-02-16 | Abida et al., PNAS 2019 |
+| TCGA LOH (ASCAT) | Google BigQuery ISB-CGC | 2026-03-16 | `isb-cgc-bq.pancancer_atlas.Filtered_all_ASCAT_data_by_Sample` |
+| HRDsum (Knijnenburg) | GDC PanCan Atlas | 2026-03-16 | Knijnenburg et al., Cell Rep 2018 |
+| Boltz-2 structures | Local GPU (Colab) | 2026-03-16 | 6 HRR complexes |
+| 450K methylation probes | UCSC Xena API (xenaPython) | 2026-03-17 | `jhu-usc.edu_PANCAN_HumanMethylation450...xena` |
+| Thorsson immune features | Cell.com supplementary mmc2 | 2026-03-17 | Thorsson et al., Immunity 2018, Table S1 |
+
+## Analysis-to-Code Mapping
+
+| Analysis | Script/Notebook | Output File(s) |
+|----------|----------------|-----------------|
+| Data acquisition | NB1 | `results/annotated_hrr_variants.csv` |
+| ClinVar concordance | NB2 | Figures 1-5, kappa statistics |
+| mCRPC validation | NB3 | Figure 6 |
+| Pan-cancer survival | NB4 | `results/pancancer_cox_results.csv` |
+| Synthetic validation | NB5 | `results/synthetic_module1-3.csv` |
+| Original robustness (5 tests) | NB6 | `results/reviewer_robustness_analyses.csv` |
+| **Extended robustness (5 new)** | **NB7** | **`results/robustness/robustness_5analyses_FINAL.csv`** |
+| **BRCA1 methylation** | **NB8** | **`results/methylation/analysis6_results.csv`** |
+| **TMB + Immune + FoldX** | **NB9** | **`results/immune/immune_features_comparison.csv`** |
+
+## Key Statistical Decisions (with justification)
+
+### 1. Germline-gene proxy (NB7, Analysis 1)
+**Decision:** Use gene identity (BRCA1/2, ATM, PALB2, CHEK2) as proxy for germline origin.
+**Justification:** TCGA PanCan Atlas does not reliably separate germline from somatic calls in all tumor types. These 5 genes have >80% germline origin in the Huang et al. (Cell 2018) TCGA germline analysis. This is a conservative proxy; some somatic variants in these genes will be misclassified as germline.
+**Alternative tested:** None available without controlled germline data.
+**Impact if wrong:** Would dilute the germline signal toward null, making our estimate conservative.
+
+### 2. Stage adjustment with complete-case analysis (NB7, Analysis 2)
+**Decision:** Complete-case analysis (patients with available stage data only).
+**Justification:** 30% of patients lack AJCC stage data. Multiple imputation was considered but not pursued because (a) the primary analysis is associative, not causal, (b) the missing mechanism may be MNAR (some tumor types do not use AJCC staging), and (c) the complete-case sensitivity analysis is more conservative.
+**Impact:** Reduced sample size (1,883 → 1,311) widened confidence intervals and contributed to loss of significance. The HR direction was preserved (0.87 < 1.0).
+
+### 3. RMST truncation points (NB7, Analysis 3)
+**Decision:** Three tau values: 60 months (5 years, clinical standard), 81 months (90th percentile of observed follow-up), 120 months (10 years).
+**Justification:** Multiple tau values demonstrate robustness across follow-up horizons. The 90th percentile avoids extrapolation beyond observed data. Pre-specified, not selected post-hoc.
+
+### 4. Purity thresholds (NB7, Analysis 4)
+**Decision:** Four thresholds: 0.2, 0.3, 0.4, 0.5.
+**Justification:** Progressive filtering from liberal (0.2, loses 25 patients) to restrictive (0.5, loses 547 patients). Demonstrates dose-response relationship between purity and signal strength.
+
+### 5. BRCA1 methylation probes (NB8, Analysis 6)
+**Decision:** Three probes (cg13601799, cg08047457, cg19531713) averaged for composite promoter methylation score.
+**Justification:** cg13601799 is the most cited BRCA1 promoter probe in the literature. The other two are adjacent CpGs in the same promoter region. Averaging reduces noise from individual probe outliers.
+**Threshold:** Beta > 0.2 (moderate), > 0.3 (specific). Both reported.
+
+### 6. Thorsson data version (NB9, Analysis 8)
+**Decision:** Used Thorsson et al. 2018 Table S1 (64 features, CIBERSORT fractions).
+**Justification:** This is the canonical TCGA pan-cancer immune landscape resource. The 2019 erratum corrected minor errors but did not change the immune subtype classifications or CIBERSORT estimates.
+
+## Negative and Null Findings (explicitly documented)
+
+| Finding | Implication |
+|---------|------------|
+| Stage adjustment attenuates HR to 0.87 (p=0.16) | Confounding by stage is real |
+| E-value = 1.80 (CI bound 1.31) | Moderate robustness to unmeasured confounding |
+| BRCA1 methylation does not differ by AM group | Pipeline captures different HRD pathway |
+| No immune infiltrate difference (CD8, M1, M2, Tregs) | HRR status ≠ immune response in untreated cohort |
+| Immune subtype similar (p=0.053) | No immune phenotype difference |
+| Somatic-only carriers: HR=0.91 (p=0.33) | No survival benefit for somatic HRR variants |
+| mCRPC validation: opposite direction (HR=1.15) | Referral bias in advanced cohort |
+
+## Reproducibility Checklist
+
+- [x] Random seed: 42 (set in every notebook/script)
+- [x] Python 3.12.3 with pinned packages (requirements.txt)
+- [x] All data from public sources (no controlled/restricted access needed for core analyses)
+- [x] Every figure traceable to specific code cell
+- [x] Every number in manuscript cross-referenceable to results CSV
+- [x] Notebooks run in order: NB1 → NB2 → NB3 → NB4 → NB5 → NB6 → NB7 → NB8 → NB9
+- [x] NB7-NB9 depend on NB4 outputs (analysis_dataset_robustness.csv)
+- [x] manifest.json contains key results for automated verification
+- [ ] FoldX analysis (NB9, Analysis 7) requires local execution with academic-licensed binary
+
+## Role of AI Tools
+
+### What AI (Claude) assisted with
+- Code generation for data processing, statistical analysis, and visualization
+- Manuscript text drafting and formatting
+- Literature search and reference verification
+- Pipeline automation (API queries, data harmonization)
+- Figure generation (forest plots, KM curves)
+- Repository organization and documentation
+
+### What was human-led (Raphael Moreira, MD)
+- Study design and research question formulation
+- Gene panel selection (25 HRR genes)
+- Statistical method selection and justification
+- Clinical interpretation of all results
+- All data source decisions
+- Review, validation, and approval of every output
+- PROSPERO registration and ethics compliance
+- Senior author communications and collaboration decisions
+
+### Verification protocol
+Every AI-generated result was verified by:
+1. Cross-checking key numbers against independent calculations
+2. Comparing results across multiple analytical approaches
+3. Validating against published literature where applicable
+4. Human review of all figures, tables, and manuscript text

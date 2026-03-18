@@ -1,88 +1,56 @@
 {
-  "project": "AlphaMissense HRR Pan-Cancer Benchmarking",
-  "version": "1.0.0",
-  "random_seed": 42,
-  "python_version": "3.12.3",
-  "data_sources": {
-    "cbioportal": {
-      "api_url": "https://www.cbioportal.org/api",
-      "access_date": "2026-02-16",
-      "studies": 31,
-      "study_suffix": "_tcga_pan_can_atlas_2018",
-      "note": "TCGA PanCancer Atlas studies via cBioPortal REST API"
-    },
-    "alphamissense": {
-      "source": "https://alphamissense.hegelab.org",
-      "publication": "Cheng et al., Science 2023, doi:10.1126/science.adg7492",
-      "variants_loaded": 554363,
-      "genes_covered": 25
-    },
-    "clinvar": {
-      "source": "https://www.ncbi.nlm.nih.gov/clinvar",
-      "access_date": "2026-02-16",
-      "variants_with_definitive_class": 5414,
-      "vus_total": 74246
-    },
-    "su2c_mcrpc": {
-      "cbioportal_study_id": "prad_su2c_2019",
-      "publication": "Abida et al., PNAS 2019, doi:10.1073/pnas.1902651116"
-    }
-  },
+  "project": "AlphaHRD",
+  "version": "2.0.0",
+  "date": "2026-03-17",
+  "seed": 42,
+  "python": "3.12.3",
+  "data_access_dates": ["2026-02-16", "2026-03-16", "2026-03-17"],
   "key_results": {
-    "concordance": {
-      "kappa": 0.733,
-      "kappa_bootstrap_ci": [0.714, 0.752],
-      "bootstrap_iterations": 2000,
-      "sensitivity": 0.759,
-      "specificity": 0.951,
-      "ppv": 0.839,
-      "npv": 0.922,
-      "accuracy": 0.903,
-      "n_tested": 5414
-    },
-    "vus_reclassification": {
-      "total_vus": 74246,
-      "reclassified_n": 66912,
-      "reclassified_pct": 90.1,
-      "pathogenic_n": 15930,
-      "benign_n": 50982,
-      "ambiguous_n": 7334
-    },
-    "pancancer_survival": {
-      "patients": 1757,
-      "events": 638,
-      "tumor_types_with_cox": 20,
-      "stratified_cox_hr": 0.848,
-      "stratified_cox_ci": [0.716, 1.005],
-      "stratified_cox_p": 0.0573,
-      "fe_meta_hr": 0.861,
-      "fe_meta_ci": [0.727, 1.020],
-      "i_squared": 0.0,
-      "cochran_q": 13.35,
-      "q_p_het": 0.82,
-      "hk_hr": 0.861,
-      "hk_ci": [0.719, 1.032],
-      "hk_p": 0.0999,
-      "prediction_interval": [0.719, 1.032],
-      "reml_tau_squared": 0.0,
-      "logrank_p_unstratified": 0.0096,
-      "median_os_pathogenic_months": 90.8,
-      "median_os_benign_months": 60.9,
-      "km_n_pathogenic": 656,
-      "km_n_benign": 1101
-    },
-    "mcrpc_feasibility": {
-      "patients": 18,
-      "events": 11,
-      "hr": 0.77,
-      "ci": [0.19, 3.13],
-      "p": 0.71
-    }
+    "clinvar_kappa": 0.733,
+    "vus_reclassified_pct": 90.1,
+    "n_patients": 1883,
+    "n_tumors": 31,
+    "n_variants": 4301,
+    "unadjusted_cox_hr": 0.803,
+    "unadjusted_cox_p": 0.008,
+    "stratified_cox_hr": 0.868,
+    "stratified_cox_p": 0.091,
+    "germline_hr": 0.617,
+    "germline_p": 0.0004,
+    "somatic_hr": 0.914,
+    "somatic_p": 0.333,
+    "stage_adjusted_hr": 0.870,
+    "stage_adjusted_p": 0.156,
+    "rmst_60mo_delta": 3.1,
+    "rmst_60mo_p": 0.004,
+    "rmst_81mo_delta": 5.2,
+    "rmst_81mo_p": 0.002,
+    "purity_05_hr": 0.699,
+    "purity_05_p": 0.0004,
+    "evalue_baseline": 1.80,
+    "evalue_ci_bound": 1.31,
+    "biallelic_hrdsum": 28.0,
+    "monoallelic_hrdsum": 12.4,
+    "hrdsum_p": 6.8e-20,
+    "hrd_positive_biallelic_pct": 24.8,
+    "hrd_positive_monoallelic_pct": 0.0,
+    "true_hrd_n": 38,
+    "brca1_meth_or_beta03": 0.91,
+    "brca1_meth_p_beta03": 0.657,
+    "tmb_path_mean": 30.588,
+    "tmb_ben_mean": 10.362,
+    "cd8_p": 0.803,
+    "immune_subtype_chi2_p": 0.053,
+    "bootstrap_hr_median": 0.802,
+    "bootstrap_ci_lo": 0.669,
+    "bootstrap_ci_hi": 0.942,
+    "permutation_p": 0.001,
+    "schoenfeld_p": 0.870
   },
-  "notebooks": {
-    "Notebook1": "Data acquisition and AlphaMissense annotation (TCGA-PRAD)",
-    "Notebook2": "Concordance with ClinVar and VUS reclassification",
-    "Notebook3": "mCRPC validation (SU2C/PCF Dream Team)",
-    "Notebook4": "Pan-cancer TCGA analysis (31 tumor types)"
+  "robustness_analyses": {
+    "total": 8,
+    "completed": 7,
+    "pending": 1,
+    "pending_detail": "Analysis 7 (FoldX) requires local execution"
   }
 }

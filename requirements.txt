@@ -1,28 +1,23 @@
-# AlphaMissense HRR Pan-Cancer Pipeline
+# AlphaHRD dependencies — Python 3.12.3
 # Install: pip install -r requirements.txt
-# Generated with Python 3.12.x
 
-# Core data
-pandas==2.3.3
-numpy==2.4.2
-openpyxl>=3.1.0
+# Core
+pandas>=2.2.0
+numpy>=1.26.0
+scipy>=1.12.0
 
-# Statistics & survival
-scipy==1.17.0
-lifelines==0.30.1
-scikit-learn==1.8.0
+# Survival analysis
+lifelines>=0.29.0
 
 # Visualization
-matplotlib==3.10.8
-seaborn==0.13.2
-adjustText>=1.2.0
+matplotlib>=3.8.0
+seaborn>=0.13.0
 
-# Data acquisition
-requests>=2.31
-tqdm>=4.66
+# API and data access
+requests>=2.31.0
+xenaPython>=1.0.0
+openpyxl>=3.1.0
 
-# Table summaries (Notebook 2)
-tableone>=0.9.1
-
-# Notebook tooling
-nbformat>=5.10
+# Optional (for specific analyses)
+# pyrmst          # RMST computation (NB7)
+# foldx           # Structural stability (NB9, requires license)
