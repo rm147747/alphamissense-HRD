@@ -17,7 +17,7 @@ A computational pipeline that integrates AlphaMissense pathogenicity scores, all
 | ClinVar concordance (kappa) | 0.733 (CI 0.712-0.754) |
 | VUS reclassified | 90.1% (66,912/74,246) |
 | Unadjusted Cox HR | 0.803 (CI 0.683-0.945, p=0.008) |
-| Germline carriers HR | 0.617 (CI 0.473-0.806, p<0.001) |
+| Germline-gene proxy HR | 0.617 (CI 0.473-0.806, p<0.001) |
 | RMST delta (tau=81mo) | +5.2 months (CI 1.5-8.5, p=0.002) |
 | Biallelic vs Mono HRDsum | 28.0 vs 12.4 (p=6.8e-20) |
 | HRD+ biallelic vs mono | 24.8% vs 0.0% (p=9.9e-24) |
@@ -36,7 +36,7 @@ A computational pipeline that integrates AlphaMissense pathogenicity scores, all
 | NB4 | PanCancer Survival | 31-tumor Cox, LOH, HRDsum, Boltz-2 | pancancer_hrr_variants.csv |
 | NB5 | Synthetic Validation | Unit test 87%, power, 12/12 stress | synthetic_module1-3.csv |
 | NB6 | Robustness | Schoenfeld, bootstrap, permutation, ridge | reviewer_robustness.csv |
-| **NB7** | **Extended Robustness** | **Germline/somatic, stage-adj, RMST, purity, E-value** | **robustness_5analyses_FINAL.csv** |
+| **NB7** | **Extended Robustness** | **Germline-gene proxy/somatic-gene proxy, stage-adj, RMST, purity, E-value** | **robustness_5analyses_FINAL.csv** |
 | **NB8** | **BRCA1 Methylation** | **Promoter methylation as independent HRD mechanism** | **analysis6_results.csv** |
 | **NB9** | **TMB + Immune + FoldX** | **Thorsson 2018 integration, FoldX preparation** | **immune_features_comparison.csv** |
 
@@ -44,7 +44,7 @@ A computational pipeline that integrates AlphaMissense pathogenicity scores, all
 
 | # | Analysis | Result | Status |
 |---|----------|--------|--------|
-| 1 | Germline vs Somatic | Germline HR=0.62 (p<0.001); Somatic HR=0.91 (ns) | Done |
+| 1 | Germline-gene proxy vs Somatic-gene proxy | Proxy HR=0.62 (p<0.001); Somatic proxy HR=0.91 (ns) | Done |
 | 2 | Stage-adjusted Cox | HR attenuates to 0.87 (p=0.16) | Done |
 | 3 | RMST | delta=+3.1 to +7.3 months, all p<0.01 | Done |
 | 4 | Purity filter | HR strengthens: 0.80 to 0.70 | Done |
