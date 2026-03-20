@@ -1,8 +1,8 @@
 Analysis,HR,CI_lo,CI_hi,p,N,Note
 Baseline (unadjusted),0.803,0.683,0.945,0.008,1883,Reference
 Tumor-stratified,0.868,0.737,1.023,0.091,1757,Covariate: tumor type
-1a. Germline carriers vs Benign,0.617,0.473,0.806,0.0004,1449,"BRCA1/2,ATM,PALB2,CHEK2"
-1b. Somatic carriers vs Benign,0.914,0.761,1.097,0.333,1624,"CDK12,ATRX,ATR,etc"
+1a. Germline-gene proxy carriers vs Benign,0.617,0.473,0.806,0.0004,1449,"BRCA1/2,ATM,PALB2,CHEK2"
+1b. Somatic-gene proxy carriers vs Benign,0.914,0.761,1.097,0.333,1624,"CDK12,ATRX,ATR,etc"
 2a. Stage-adjusted,0.87,0.718,1.055,0.156,1311,Δ=3.1% from unadjusted
 2b. Stage+Age adjusted,0.862,0.711,1.044,0.129,1304,Complete case
 2c. Fully adjusted,0.889,0.734,1.078,0.232,1304,Ridge penalty=0.01
