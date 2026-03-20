@@ -4,7 +4,11 @@
   "date": "2026-03-17",
   "seed": 42,
   "python": "3.12.3",
-  "data_access_dates": ["2026-02-16", "2026-03-16", "2026-03-17"],
+  "data_access_dates": [
+    "2026-02-16",
+    "2026-03-16",
+    "2026-03-17"
+  ],
   "key_results": {
     "clinvar_kappa": 0.733,
     "vus_reclassified_pct": 90.1,
@@ -15,11 +19,7 @@
     "unadjusted_cox_p": 0.008,
     "stratified_cox_hr": 0.868,
     "stratified_cox_p": 0.091,
-    "germline_hr": 0.617,
-    "germline_p": 0.0004,
-    "somatic_hr": 0.914,
-    "somatic_p": 0.333,
-    "stage_adjusted_hr": 0.870,
+    "stage_adjusted_hr": 0.87,
     "stage_adjusted_p": 0.156,
     "rmst_60mo_delta": 3.1,
     "rmst_60mo_p": 0.004,
@@ -27,7 +27,7 @@
     "rmst_81mo_p": 0.002,
     "purity_05_hr": 0.699,
     "purity_05_p": 0.0004,
-    "evalue_baseline": 1.80,
+    "evalue_baseline": 1.8,
     "evalue_ci_bound": 1.31,
     "biallelic_hrdsum": 28.0,
     "monoallelic_hrdsum": 12.4,
@@ -45,7 +45,13 @@
     "bootstrap_ci_lo": 0.669,
     "bootstrap_ci_hi": 0.942,
     "permutation_p": 0.001,
-    "schoenfeld_p": 0.870
+    "schoenfeld_p": 0.87,
+    "germline_proxy_hr": 0.617,
+    "germline_proxy_p": 0.0004,
+    "germline_proxy_note": "Gene-identity proxy: BRCA1/2, ATM, PALB2, CHEK2 carriers (~80% germline per Huang et al. Cell 2018). NOT direct mutationStatus separation.",
+    "somatic_proxy_hr": 0.914,
+    "somatic_proxy_p": 0.333,
+    "somatic_proxy_note": "Remaining HRR genes (CDK12, ATRX, ATR, etc). Predominantly somatic origin."
   },
   "robustness_analyses": {
     "total": 8,
