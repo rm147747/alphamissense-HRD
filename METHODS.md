@@ -158,23 +158,7 @@ Current TCGA ~40% power. Need N=5,000-7,500 for 80% power at HR=0.70.
 ### 9.3 Adversarial Stress Test
 12/12 scenarios survive p<0.05, including 50% AM error + 30% LOH error.
 
-## 10. Role of AI Tools
-
-### What AI assisted with
-- Code generation, manuscript formatting, literature search
-- Pipeline automation and figure generation
-- Statistical analysis scripting and documentation
-
-### What was human-led
-- Study design, gene panel selection, statistical method choices
-- Interpretation of results, clinical context
-- All data acquisition decisions
-- Review and validation of all outputs
-
-### Verification
-Every result traceable to a specific notebook cell. manifest.json contains key results for cross-verification. See AUDIT.md for complete disclosure.
-
-## 11. Reproducibility
+## 10. Reproducibility
 
 - Python 3.12.3, random seed 42
 - Packages pinned in requirements.txt
