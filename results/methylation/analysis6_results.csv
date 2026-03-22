@@ -1,4 +1,4 @@
-patient_id,study,tumor,n_hrr,n_path,n_benign,max_am,genes,has_am_pathogenic,os_time,os_event,age,stage,purity,brca1_promoter_mean,sil_0.1,sil_0.2,sil_0.3,brca1_silenced
+patient_id,study,tumor,n_hrr,n_path,n_benign,max_am,genes,has_am_pathogenic,os_time,os_event,age,stage,purity,brca1_promoter_mean,silenced_0.1,silenced_0.2,silenced_0.3,brca1_silenced
 TCGA-05-4390,luad_tcga_pan_can_atlas_2018,Lung Adeno,2,1,1,0.9738,"ATM,BRIP1",True,37.0187724,0.0,58.0,1.0,0.57,0.2533166666666667,True,True,False,True
 TCGA-05-4396,luad_tcga_pan_can_atlas_2018,Lung Adeno,1,1,0,0.9008,RAD54L,True,9.961534668,1.0,76.0,3.0,0.82,0.2771133333333333,True,True,False,True
 TCGA-05-4415,luad_tcga_pan_can_atlas_2018,Lung Adeno,1,0,1,0.1824,BRIP1,False,2.991748036,1.0,57.0,3.0,0.67,0.4957,True,True,True,True
