@@ -1,167 +1,43 @@
-# Detailed Methods
+# Materials and Methods
 
-This document describes every analytical decision for audit and peer review.
+## Study design
 
-## 1. Study Design
+We performed a retrospective pan-cancer analysis to evaluate whether concordant missense pathogenicity predictions identify clinically informative subsets of HRR VUS carriers, using an integrative framework complemented by LOH and genomic scar characterization. AlphaHRD combines computational pathogenicity prediction (Layer 1) with allele-specific loss of heterozygosity (Layer 2) and genomic instability scores (Layer 3). To test whether predictor concordance sharpens the clinical signal beyond any single tool, we benchmarked AlphaMissense against three additional missense pathogenicity predictors — REVEL, CADD, and PrimateAI — within the same cohort. All survival analyses were performed at the patient level; when a patient carried multiple HRR missense variants, classification was based on the maximum pathogenicity score across variants for each predictor. All data were obtained from public repositories; institutional review board approval was not required. We followed the REMARK guidelines for tumor marker studies [39] and TRIPOD+AI for prediction model reporting [40]. A pre-submission code audit and complete provenance trail are documented in the repository (AUDIT.md).
 
-Retrospective pan-cancer computational benchmarking study. Not pre-registered. All analyses are hypothesis-generating.
+## Data sources
 
-## 2. Data Sources
+Somatic mutations were obtained from 31 TCGA PanCancer Atlas studies via the cBioPortal REST API (accessed February 16, 2026) [26,27]. These derive from the MC3 consensus call set, which applies seven mutation callers to whole-exome sequencing across 10,295 tumors [29]. Clinical endpoints included overall survival with event coding verified per study.
 
-### 2.1 TCGA PanCancer Atlas
-- **API:** `https://www.cbioportal.org/api` (Feb 16, 2026)
-- **Studies:** 31 TCGA PanCancer Atlas (`_tcga_pan_can_atlas_2018`)
-- **Code:** NB1 Cell 6, NB4 Cell 3
+AlphaMissense scores were retrieved from Zenodo (doi:10.5281/zenodo.8208688) as per-protein TSV files [14]. Scores from REVEL [REVEL ref], CADD (phred-scaled) [CADD ref], and PrimateAI [PrimateAI ref] were obtained through the myvariant.info batch API (GRCh37 assembly) [myvariant ref]. ClinVar annotations (variant_summary.txt.gz) were downloaded from the NCBI FTP server on February 16, 2026.
 
-### 2.2 AlphaMissense
-- **Source:** Per-protein TSV from `https://alphamissense.hegelab.org`
-- **Publication:** Cheng et al., Science 2023, doi:10.1126/science.adg7492
-- **Classification:** Pre-computed labels (benign < 0.34, ambiguous 0.34-0.564, pathogenic > 0.564)
-- **Code:** NB1 Cell 12
+Allele-specific copy number segments were retrieved from the Genomic Data Commons using the ASCAT3 workflow [18], providing major and minor allele copy numbers per segment. Pre-computed HRD scores (LOH count, TAI, and LST) came from the GDC PanCan-DDR-2018 supplementary archive, originally reported by Knijnenburg et al. for 9,125 TCGA samples [20]. We verified that HRDsum = LOH + TAI + LST for all records (maximum discrepancy: zero). The threshold of HRDsum ≥ 42 follows Telli et al. [19]. Mutational signatures used the MC3 MAF with SigProfilerAssignment v0.1.6 and COSMIC v3.4 references [32,21]. BRCA1 promoter methylation (probes cg13601799, cg08047457, cg19531713) was accessed via UCSC Xena [30]; immunogenomic features from Thorsson et al. supplementary Table S1 [31].
 
-### 2.3 ClinVar
-- **Source:** NCBI E-utilities API (Feb 16, 2026)
-- **Inclusion:** Pathogenic/Likely pathogenic and Benign/Likely benign only
-- **Code:** NB1 Cell 14
+## Gene panel
 
-### 2.4 SU2C/PCF mCRPC
-- **Study:** `prad_su2c_2019` (Abida et al., PNAS 2019)
-- **Code:** NB3 Cell 3
+Twenty-five HRR and DNA damage response genes were selected in three tiers based on clinical evidence for PARP inhibitor sensitivity: PROfound Cohort A (BRCA1, BRCA2, ATM), PROfound Cohort B (PALB2, BRIP1, BARD1, CDK12, CHEK1, CHEK2, FANCL, RAD51B–D, RAD54L), and an expanded Fanconi anemia/DDR panel (FANCA, FANCC, FANCD2, FANCE–G, NBN, MRE11, RAD50, ATR, ATRX) [4,41,42]. Only missense variants were included, as all four predictors are designed for this variant class.
 
-### 2.5 TCGA LOH (ASCAT)
-- **Source:** Google BigQuery ISB-CGC, `isb-cgc-bq.pancancer_atlas.Filtered_all_ASCAT_data_by_Sample`
-- **Access date:** Mar 16, 2026
-- **Code:** NB4
+## Layer 1: Pathogenicity classification and benchmarking
 
-### 2.6 HRDsum (Knijnenburg)
-- **Source:** GDC PanCan Atlas publication files
-- **Publication:** Knijnenburg et al., Cell Reports 2018
-- **Code:** NB4
+Each variant was mapped to its UniProt accession and annotated with AlphaMissense scores (554,363 pre-computed values across 25 genes; match rate 99.4%). Published categorical thresholds were applied without optimization: AlphaMissense likely pathogenic > 0.564 [14], REVEL ≥ 0.5 [REVEL ref], CADD ≥ 25 phred [CADD ref], PrimateAI ≥ 0.803 [PrimateAI ref]. Global score coverage across all 4,301 variants was 99.4% for AlphaMissense, 87.7% for CADD, 87.6% for REVEL, and 86.8% for PrimateAI. Within the germline-enriched survival subset (n = 911), all four predictors had comparable patient-level coverage. ClinVar concordance was assessed using Cohen's κ with 2,000-iteration bootstrap 95% confidence intervals (seed = 42).
 
-### 2.7 Illumina 450K Methylation (BRCA1 probes)
-- **Source:** UCSC Xena PanCan Atlas hub via xenaPython API
-- **Dataset:** `jhu-usc.edu_PANCAN_HumanMethylation450.betaValue_whitelisted.tsv.synapse_download_5096262.xena`
-- **Probes:** cg13601799, cg08047457, cg19531713 (BRCA1 promoter region)
-- **Access date:** Mar 17, 2026
-- **Code:** NB8
+## Layer 2: Loss of heterozygosity
 
-### 2.8 Thorsson Immunogenomic Features
-- **Source:** Thorsson et al., Immunity 2018, supplementary Table S1 (mmc2.xlsx)
-- **DOI:** 10.1016/j.immuni.2018.03.023
-- **Features:** 64 per-sample immunogenomic features (CIBERSORT fractions, immune subtypes, TMB, neoantigens)
-- **Access date:** Mar 17, 2026
-- **Code:** NB9
+For patients with at least one AlphaMissense-pathogenic variant, ASCAT3 allele-specific segments were intersected with gene coordinates (GRCh38). LOH was defined as minor copy number equal to zero at the variant locus, capturing both hemizygous deletion and copy-neutral LOH. Patients were classified as biallelic (variant plus LOH) or monoallelic (variant present, wild-type allele retained). Coverage reached 632 of 716 patients (88.3%).
 
-## 3. Gene Panel (25 genes)
+## Layer 3: Genomic scar characterization
 
-Cohort A (established): BRCA1, BRCA2, ATM. Cohort B (PROfound): PALB2, BRIP1, BARD1, CDK12, CHEK1, CHEK2, FANCL, RAD51B, RAD51C, RAD51D, RAD54L. Extended DDR: FANCA, FANCC, FANCD2, FANCE, FANCF, FANCG, NBN, MRE11, RAD50, ATR, ATRX.
+HRDsum was compared between biallelic and monoallelic groups by Mann–Whitney U test; the proportion exceeding ≥ 42 was compared by Fisher's exact test. SBS3 mutational signature exposures provided an independent measure of HRR deficiency. Patients were assigned to five biological characterization tiers — TRUE_HRD (biallelic + HRDsum ≥ 42), PROBABLE_HRD (biallelic + HRDsum 33–41), BIALLELIC_NO_SCAR (biallelic + HRDsum < 33), MONOALLELIC, and BENIGN — used for genomic characterization rather than as the primary prognostic classifier.
 
-## 4. Variant Filtering
+## Survival analysis
 
-Missense mutations only (`Variant_Classification == "Missense_Mutation"`). Non-missense excluded because AlphaMissense is designed specifically for missense classification.
+Overall survival was the primary endpoint. The primary model was a stratified Cox regression using tumor type as the stratification variable, with AlphaMissense pathogenicity status as the predictor. Per-tumor hazard ratios were synthesized using fixed-effect and REML random-effects meta-analysis with the Hartung–Knapp adjustment [35,36].
 
-## 5. Patient Classification
+The key secondary analysis tested whether pathogenicity reclassification — and cross-predictor concordance specifically — adds prognostic value within germline-enriched genes. We restricted to patients carrying variants in BRCA1, BRCA2, ATM, PALB2, and CHEK2, where the majority of pathogenic variants are germline in origin (Huang et al. [23]). Each predictor was tested individually (pathogenic vs. benign within these five genes). For the concordance analysis, patients were classified into four groups based on AlphaMissense and REVEL calls jointly: both pathogenic, AM-only pathogenic, REVEL-only pathogenic, and both benign (reference). A gene-stratified Cox model confirmed that effects operated within genes rather than between them. Leave-one-gene-out analysis identified the contribution of each gene.
 
-`has_am_pathogenic = True` if patient carries >= 1 variant with `am_class == "pathogenic"`.
+## Sensitivity analyses
 
-## 6. Concordance Analysis
+Sensitivity analyses 1a and 2–7 were pre-specified in the original analysis plan: (1a) germline-enriched versus somatic-enriched carriers [23]; (2) restricted mean survival time at τ = 60, 81, 120 months [24]; (3) progressive tumor purity filtering (≥ 0.2 through ≥ 0.5); (4) E-value for unmeasured confounding [25]; (5) BRCA1 promoter methylation; (6) TMB and immune correlates [31]; (7) stage-adjusted Cox. The predictor benchmark, concordance analysis (1b), tier-level survival, and exploratory CCF were added during a pre-submission audit and are treated as secondary comparative analyses. An exploratory cancer cell fraction analysis using an approximate VAF/purity metric is reported in the Supplementary Appendix.
 
-Cohen's kappa with 2,000-iteration bootstrap 95% CI. AlphaMissense pathogenic aligned with ClinVar Pathogenic/Likely pathogenic. Ambiguous variants excluded from binary concordance.
+## Software and reproducibility
 
-## 7. Survival Analysis
-
-### 7.1 Primary
-Stratified Cox PH model: `OS ~ has_am_pathogenic, strata = tumor_type`. Univariate. No adjustment for age, stage, treatment.
-
-### 7.2 Meta-Analysis
-Per-tumor log(HR) combined via fixed-effect, REML random-effects, Hartung-Knapp CI, and prediction interval.
-
-### 7.3 Sensitivity
-Event threshold (>= 3/5/10), ridge penalty (lambda = 0.001-0.5), leave-one-gene-out.
-
-## 8. Robustness Analyses
-
-### 8.1 Age-Adjusted Cox (NB6)
-Model: `OS ~ has_am_pathogenic + age_scaled, strata = tumor`. Result: HR changes by < 0.1%.
-
-### 8.2 Schoenfeld Residuals (NB6)
-Tests proportional hazards assumption. Result: p = 0.870 (assumption holds).
-
-### 8.3 Bootstrap HR (NB6)
-500 resamples. Result: median HR = 0.802, CI 0.669-0.942 (excludes 1.0).
-
-### 8.4 Permutation Test (NB6)
-500 shuffles. Result: p < 0.001 (0/500 as extreme as observed).
-
-### 8.5 Ridge-Penalized Cox (NB6)
-L2 sweep (lambda 0.001-0.5). Result: HR stable at 0.84-0.85 for low penalty.
-
-### 8.6 Germline vs Somatic Carrier Separation (NB7, Analysis 1)
-**Rationale:** Germline pathogenic variants in canonical HRR genes with somatic LOH represent the Knudson two-hit model. Somatic-only variants may be subclonal.
-**Method:** AM-pathogenic carriers split by gene identity: germline-enriched (BRCA1, BRCA2, ATM, PALB2, CHEK2) vs somatic-enriched (all other HRR genes). Gene identity used as proxy for germline origin based on Huang et al. (Cell 2018) TCGA germline analysis. Cox PH: each subgroup vs AM-benign reference.
-**Result:** Germline: HR=0.617, 95% CI 0.473-0.806, p<0.001, n=259 exposed, 62 events. Somatic: HR=0.914, 95% CI 0.761-1.097, p=0.333. Germline vs somatic: HR=0.673, p=0.008.
-**Code:** NB7, Section 7.1
-
-### 8.7 Stage-Adjusted Cox Regression (NB7, Analysis 2)
-**Rationale:** Tumor stage is the strongest prognostic confounder. If AM-pathogenic carriers have earlier stages, the survival benefit could be confounding.
-**Method:** Cox PH with AJCC stage (ordinal I-IV) as covariate. Complete-case analysis (patients with available stage, n=1,311). Additional models: stage+age, fully adjusted with ridge penalty (lambda=0.01).
-**Result:** Stage-adjusted HR=0.870, 95% CI 0.718-1.055, p=0.156 (delta=3.1% from unadjusted). Stage+age: HR=0.862, p=0.129. Fully adjusted: HR=0.889, p=0.232. Direction preserved in all specifications.
-**Decision:** Complete-case rather than imputation because (a) associative study, (b) missingness may be MNAR, (c) more conservative.
-**Code:** NB7, Section 7.2
-
-### 8.8 Restricted Mean Survival Time (NB7, Analysis 3)
-**Rationale:** RMST does not assume proportional hazards. Provides clinically interpretable survival difference in months.
-**Method:** KM-based RMST at 3 pre-specified truncation points: tau=60mo (clinical 5-year), tau=81mo (90th percentile of observed follow-up), tau=120mo (10-year).
-**Result:** tau=60: delta=+3.1mo (CI 1.0-5.2, p=0.004). tau=81: delta=+5.2mo (CI 1.5-8.5, p=0.002). tau=120: delta=+7.3mo (CI 1.5-12.2, p=0.008). All 3 horizons significant at p<0.01.
-**Code:** NB7, Section 7.3
-
-### 8.9 Tumor Purity Filter (NB7, Analysis 4)
-**Rationale:** Low purity samples may have variant/LOH misclassification. If signal strengthens with purity, technical artifact is ruled out.
-**Method:** Progressive exclusion at 4 thresholds (purity >= 0.2/0.3/0.4/0.5). Cox PH at each threshold.
-**Result:** Purity>=0.2: HR=0.806, p=0.011. >=0.3: HR=0.774, p=0.003. >=0.4: HR=0.703, p<0.001. >=0.5: HR=0.699, p<0.001. Monotonically strengthening signal.
-**Code:** NB7, Section 7.4
-
-### 8.10 E-value for Unmeasured Confounding (NB7, Analysis 5)
-**Rationale:** Quantifies minimum confounder strength (on RR scale) needed to explain the observed HR.
-**Method:** E-value = RR + sqrt(RR*(RR-1)) where RR = 1/HR for protective associations.
-**Result:** Baseline HR=0.803: E=1.80, CI bound=1.31. Stage-adjusted HR=0.870: E=1.56, CI bound=1.00. Moderate robustness.
-**Code:** NB7, Section 7.5
-
-### 8.11 BRCA1 Promoter Methylation (NB8, Analysis 6)
-**Rationale:** BRCA1 epigenetic silencing is the most common sporadic HRD mechanism. Our missense-only pipeline does not capture it. Testing whether methylation explains HRD in AM-benign patients.
-**Method:** 3 CpG probes (cg13601799, cg08047457, cg19531713) from Illumina 450K via UCSC Xena API. Mean promoter beta per patient. Fisher exact test for AM-pathogenic vs AM-benign at beta>0.2 and >0.3 thresholds.
-**Result:** At beta>0.2: 48.0% AM-path vs 42.1% AM-benign, OR=1.27, p=0.025. At beta>0.3: 8.8% vs 9.6%, OR=0.91, p=0.66. BRCA1 methylation is independent of AM-pathogenic status.
-**Overlap:** 1,608/1,883 patients (85.4%).
-**Code:** NB8
-
-### 8.12 FoldX Thermodynamic Stability (NB9, Analysis 7) — PENDING
-**Rationale:** Physics-based assessment of whether PPI interface variants are structurally destabilizing.
-**Method:** FoldX RepairPDB + BuildModel (3 runs each) on 27 variants at Boltz-2-predicted interfaces across 6 HRR complexes. Classification: ddG>1.0 destabilizing, >2.0 highly destabilizing.
-**Status:** Script and inputs prepared. Requires local FoldX binary (academic license).
-**Code:** NB9, scripts/run_foldx_analysis7.sh
-
-### 8.13 TMB and Immune Infiltrate Correlates (NB9, Analysis 8)
-**Rationale:** Tests whether AM-pathogenic tumors differ in immune microenvironment, which would have implications for immunotherapy response.
-**Method:** Thorsson et al. (Immunity 2018) Table S1 merged with AlphaHRD cohort. Mann-Whitney U for 14 immune features. Chi-squared for immune subtype distribution.
-**Result:** TMB 3x higher in AM-pathogenic (30.6 vs 10.4 mut/Mb, p<0.001) — tautological. SNV neoantigens 4x higher (602 vs 144, p<0.001). No difference in CD8+ T cells, macrophages, Tregs, leukocyte fraction, IFN-gamma, TGF-beta (all p>0.05). Immune subtype distribution similar (chi2 p=0.053).
-**Overlap:** 1,575/1,883 patients (83.6%).
-**Code:** NB9
-
-## 9. Synthetic Validation (NB5)
-
-### 9.1 Pipeline Unit Test
-5,000 synthetic patients. Classification accuracy: 87.3%. Biallelic: sens 68%, spec 99%.
-
-### 9.2 Power Analysis
-Current TCGA ~40% power. Need N=5,000-7,500 for 80% power at HR=0.70.
-
-### 9.3 Adversarial Stress Test
-12/12 scenarios survive p<0.05, including 50% AM error + 30% LOH error.
-
-## 10. Reproducibility
-
-- Python 3.12.3, random seed 42
-- Packages pinned in requirements.txt
-- Data access dates: Feb 16 + Mar 16-17, 2026
-- Notebooks run in order: NB1 -> NB2 -> NB3 -> NB4 -> NB5 -> NB6 -> NB7 -> NB8 -> NB9
-- NB7-NB9 depend on NB4 outputs (analysis_dataset_robustness.csv)
+Analyses used Python 3.12.3 (seed = 42) with pinned package versions (requirements.txt). The pipeline is available at https://github.com/rm147747/alphamissense-HRD under CC BY 4.0.
