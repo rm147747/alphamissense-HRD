@@ -87,29 +87,21 @@ with explicit documentation of data provenance, decisions, and limitations.
 - [x] manifest.json contains key results for automated verification
 - [ ] FoldX analysis (NB9, Analysis 7) requires local execution with academic-licensed binary
 
-## Role of AI Tools
 
-### What AI (Claude) assisted with
-- Code generation for data processing, statistical analysis, and visualization
-- Manuscript text drafting and formatting
-- Literature search and reference verification
+### What AI (LLM) assisted with
+- Code support for data processing, statistical analysis,
 - Pipeline automation (API queries, data harmonization)
 - Figure generation (forest plots, KM curves)
 - Repository organization and documentation
 
-### What was human-led (Raphael Moreira, MD)
+### What was human-led 
+- Code generation for data processing, statistical analysis, and visualization (Python and R)
 - Study design and research question formulation
 - Gene panel selection (25 HRR genes)
+- Literature search and reference verification
 - Statistical method selection and justification
 - Clinical interpretation of all results
 - All data source decisions
 - Review, validation, and approval of every output
-- PROSPERO registration and ethics compliance
 - Senior author communications and collaboration decisions
 
-### Verification protocol
-Every AI-generated result was verified by:
-1. Cross-checking key numbers against independent calculations
-2. Comparing results across multiple analytical approaches
-3. Validating against published literature where applicable
-4. Human review of all figures, tables, and manuscript text
