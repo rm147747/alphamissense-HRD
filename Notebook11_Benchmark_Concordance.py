@@ -30,3 +30,25 @@ Outputs:
 # Run: python3 Notebook11_Benchmark_Concordance.py
 print("See terminal execution for full output.")
 print("All CSV outputs already saved in results/")
+
+# ── SECTION 5: E-VALUES ──
+# E-value formula: RR + sqrt(RR * (RR - 1)), where RR = 1/HR if HR < 1
+import numpy as np
+
+def evalue(hr):
+    rr = 1/hr if hr < 1 else hr
+    return rr + np.sqrt(rr * (rr - 1))
+
+def evalue_ci(ci_bound):
+    return 1.0 if ci_bound >= 1.0 else evalue(ci_bound)
+
+evalues = {
+    'Stratified pan-cancer (HR=0.848, CI_hi=1.005)': (0.848, 1.005),
+    'Within-germline AM (HR=0.646, CI_hi=0.893)': (0.646, 0.893),
+    'Concordance AM+REVEL (HR=0.563, CI_hi=0.814)': (0.563, 0.814),
+}
+
+print("\n=== E-VALUES ===")
+for label, (hr, ci_hi) in evalues.items():
+    print(f"  {label}")
+    print(f"    E-value = {evalue(hr):.2f}, CI bound = {evalue_ci(ci_hi):.2f}")
